@@ -1,0 +1,451 @@
+/* static/style.css */
+
+/* 1. Variáveis de Cor para os Temas */
+:root {
+    /* Cores para o Tema Claro (Light) - Baseadas nos seus estilos atuais ou nos padrões do Bootstrap */
+    --bs-body-bg-light: #f8f9fa;
+    --bs-body-color-light: #212529;
+    --bs-emphasis-color-light: #000;
+    --card-bg-light: #ffffff;
+    --card-border-color-light: rgba(0, 0, 0, 0.125);
+    --card-header-bg-light: #f8f9fa; /* Seu .table thead th e .card-header usavam isso */
+    --card-header-color-light: #212529;
+    --navbar-bg-light: #0d6efd; /* Azul primário do Bootstrap que você usava */
+    --navbar-color-light: rgba(255, 255, 255, 0.75);
+    --navbar-brand-color-light: #ffffff;
+    --navbar-hover-color-light: #ffffff;
+    --offcanvas-bg-light: #f8f9fa; /* Fundo do offcanvas no modo claro */
+    --offcanvas-color-light: #212529; /* Cor do texto no offcanvas claro */
+    --offcanvas-link-hover-bg-light: #e9ecef;
+    --offcanvas-link-hover-color-light: #0d6efd; /* Cor primária para hover do link */
+    --table-header-bg-light: #f8f9fa; /* Seu .table thead th */
+    --table-header-color-light: #212529;
+    --form-control-focus-border-light: #86b7fe;
+    --form-control-focus-shadow-light: rgba(13, 110, 253, 0.25);
+    --link-color-light: #0d6efd;
+    --link-hover-color-light: #0a58ca;
+}
+
+html[data-bs-theme="dark"] {
+    /* Cores para o Tema Escuro (Dark) */
+    --bs-body-bg-dark: #212529; /* Fundo escuro padrão do Bootstrap */
+    --bs-body-color-dark: #dee2e6; /* Texto claro */
+    --bs-emphasis-color-dark: #fff;
+    --card-bg-dark: #2b3035; /* Um pouco mais claro que o body */
+    --card-border-color-dark: rgba(255, 255, 255, 0.125);
+    --card-header-bg-dark: #343a40; /* Cabeçalho de card escuro */
+    --card-header-color-dark: #ffffff;
+    --navbar-bg-dark: #1a1d20; /* Navbar mais escura */
+    --navbar-color-dark: rgba(255, 255, 255, 0.75);
+    --navbar-brand-color-dark: #ffffff;
+    --navbar-hover-color-dark: #ffffff;
+    --offcanvas-bg-dark: #2b3035; /* Fundo do offcanvas no modo escuro */
+    --offcanvas-color-dark: #dee2e6; /* Cor do texto no offcanvas escuro */
+    --offcanvas-link-hover-bg-dark: #343a40;
+    --offcanvas-link-hover-color-dark: #ffffff;
+    --table-header-bg-dark: #343a40;
+    --table-header-color-dark: #dee2e6;
+    --form-control-focus-border-dark: #5899e8; /* Um azul mais claro para contraste */
+    --form-control-focus-shadow-dark: rgba(88, 153, 232, 0.35);
+    --link-color-dark: #6ea8fe; /* Links mais claros para fundo escuro */
+    --link-hover-color-dark: #8bb9ff;
+
+    /* Bootstrap dark mode variables (se precisar sobrescrever mais) */
+    --bs-light-rgb: 222, 226, 230; /* Cor de texto --bs-light */
+    --bs-dark-rgb: 33, 37, 41;   /* Cor de texto --bs-dark */
+    /* Formulários no Tema Escuro */
+    --form-control-bg-dark: #2b3035; /* Fundo do input que você já pode ter definido */
+    --form-control-color-dark: #dee2e6; /* Cor do texto do input */
+    --form-control-border-dark: #495057; /* Cor da borda do input */
+    --form-control-placeholder-dark: #6c757d; /* Cor do placeholder */
+
+    .form-control,
+    .form-select {
+        background-color: var(--form-control-bg-dark);
+        color: var(--form-control-color-dark); /* Garante que o TEXTO DENTRO do input seja claro */
+        border-color: var(--form-control-border-dark);
+    }
+
+    /* Especificamente para textareas e inputs preenchidos, para garantir a cor do texto */
+    .form-control:disabled, .form-control[readonly] {
+        background-color: #343a40; /* Um pouco diferente para desabilitado/readonly */
+        opacity: 0.75;
+        color: var(--form-control-color-dark);
+    }
+    
+    /* Para o caso dos campos de descrição e observações na sua imagem, que são textareas preenchidas mas não desabilitadas: */
+    /* A regra .form-control acima já deveria cobrir, mas se for um elemento específico: */
+    .border.p-3.bg-light.rounded { /* Esta classe é usada para os blocos de Descrição/Observações */
+        background-color: var(--form-control-bg-dark) !important; /* Sobrescreve .bg-light */
+        color: var(--form-control-color-dark) !important;
+        border-color: var(--form-control-border-dark) !important;
+    }
+
+
+    /* Cards no Tema Escuro (revisão) */
+    .card {
+        background-color: var(--card-bg-dark); /* Você já deve ter isso */
+        border-color: var(--card-border-color-dark); /* Você já deve ter isso */
+        color: var(--bs-body-color-dark); /* Garante que o texto padrão dentro do card seja claro */
+    }
+    .card-header {
+        background-color: var(--card-header-bg-dark); /* Você já deve ter isso */
+        color: var(--card-header-color-dark); /* Você já deve ter isso */
+        border-bottom: 1px solid var(--card-border-color-dark);
+    }
+    /* Se o cabeçalho do card usava .bg-primary */
+    .card-header.bg-primary {
+        background-color: var(--navbar-bg-dark) !important; /* Reutilizando var da navbar dark */
+        color: var(--navbar-brand-color-dark) !important;
+        border-bottom: 1px solid var(--navbar-bg-dark);
+    }
+
+
+    /* List Group (onde aparece "Data da Execução", "Duração", etc.) */
+    .list-group-item {
+        background-color: transparent; /* Garante que não herde um fundo claro do card se o card for transparente */
+        color: var(--bs-body-color-dark);
+        border-color: var(--card-border-color-dark); /* Bordas sutis se houver */
+    }
+    .list-group-item strong { /* Para os rótulos como "Data da Execução:" */
+        color: var(--bs-body-color-dark); /* Pode ser um pouco mais claro ou diferente se desejar destaque */
+    }
+    .list-group-flush > .list-group-item { /* Remove bordas laterais e de cima/baixo desnecessárias */
+        border-width: 0 0 1px;
+    }
+    .list-group-flush > .list-group-item:last-child {
+        border-bottom-width: 0;
+    }
+    
+
+    /* Badges (Exemplo de ajuste para o .bg-warning se necessário) */
+    /* .badge.bg-warning.text-dark { ... } - No modo escuro, texto escuro sobre amarelo pode ser ok, mas se quiser mudar:
+        background-color: #A67C00 !important;  Um amarelo mais escuro
+        color: #fff !important;  Texto branco
+        Ou mantenha como está se o contraste for aceitável
+    */
+    /* Para outros badges, verifique o contraste */
+    .badge.bg-success { color: var(--premix-texto-claro) !important; } /* Garante texto claro no verde */
+    .badge.bg-danger { color: var(--premix-texto-claro) !important; } /* Garante texto claro no vermelho */
+    .badge.bg-primary { color: var(--premix-texto-claro) !important; } /* Se usar bg-primary para badges */
+
+
+    /* Botões (Verificar Contraste do Texto) */
+    /* .btn-success, .btn-danger já têm cores fortes. O texto padrão do Bootstrap (branco) geralmente funciona. */
+    /* Se o texto estiver escuro por algum motivo: */
+    .btn-success, .btn-danger, .btn-info, .btn-primary {
+        color: var(--premix-texto-claro) !important; /* Garante texto branco/claro nos botões coloridos */
+    }
+    .btn-outline-secondary { /* Botão Voltar */
+        color: var(--bs-body-color-dark);
+        border-color: var(--bs-body-color-dark);
+    }
+    .btn-outline-secondary:hover {
+        background-color: var(--bs-body-color-dark);
+        color: var(--bs-body-bg-dark); /* Inverte as cores no hover */
+    }
+}
+
+
+/* Estilos gerais */
+body {
+    background-color: var(--bs-body-bg-light);
+    color: var(--bs-body-color-light);
+    padding-top: 56px; /* Mantém o padding para a navbar fixa */
+}
+html[data-bs-theme="dark"] body {
+    background-color: var(--bs-body-bg-dark);
+    color: var(--bs-body-color-dark);
+}
+
+/* Navbar personalizada */
+.navbar { /* Sua sombra */
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+.navbar.bg-primary { /* Assume que .bg-primary é usado no HTML para a navbar */
+    background-color: var(--navbar-bg-light) !important; 
+}
+html[data-bs-theme="dark"] .navbar.bg-primary {
+    background-color: var(--navbar-bg-dark) !important;
+}
+.navbar-brand {
+    font-weight: 600; /* Seu estilo */
+    color: var(--navbar-brand-color-light) !important;
+}
+html[data-bs-theme="dark"] .navbar-brand {
+    color: var(--navbar-brand-color-dark) !important;
+}
+.navbar .btn-primary { /* Botão de toggle do offcanvas na navbar */
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: var(--navbar-brand-color-light) !important; /* Cor do ícone do botão */
+}
+html[data-bs-theme="dark"] .navbar .btn-primary {
+    color: var(--navbar-brand-color-dark) !important;
+}
+.navbar .btn-primary:hover,
+.navbar .btn-primary:focus {
+    opacity: 0.75;
+}
+.navbar-nav .nav-link { /* Links como Sair/Login na navbar (se ainda existirem lá) */
+    padding: 0.5rem 1rem; /* Seu estilo */
+    color: var(--navbar-color-light);
+}
+html[data-bs-theme="dark"] .navbar-nav .nav-link {
+    color: var(--navbar-color-dark);
+}
+.navbar-nav .nav-link:hover {
+    color: var(--navbar-hover-color-light);
+}
+html[data-bs-theme="dark"] .navbar-nav .nav-link:hover {
+    color: var(--navbar-hover-color-dark);
+}
+.navbar-text { /* Texto "Olá, admin" se estiver na navbar */
+    color: var(--navbar-color-light);
+}
+html[data-bs-theme="dark"] .navbar-text {
+    color: var(--navbar-color-dark);
+}
+
+
+/* Menu Lateral (Offcanvas) */
+.offcanvas { /* Bootstrap já lida com data-bs-theme para offcanvas, mas podemos refinar */
+    background-color: var(--offcanvas-bg-light);
+    color: var(--offcanvas-color-light);
+}
+html[data-bs-theme="dark"] .offcanvas {
+    background-color: var(--offcanvas-bg-dark);
+    color: var(--offcanvas-color-dark);
+}
+.offcanvas-start { width: 280px; }
+.offcanvas-header { border-bottom: 1px solid var(--card-border-color-light); } /* Usando var de borda de card */
+html[data-bs-theme="dark"] .offcanvas-header { border-bottom: 1px solid var(--card-border-color-dark); }
+
+.offcanvas-title { color: var(--bs-body-color-light); } /* Cor do título do offcanvas */
+html[data-bs-theme="dark"] .offcanvas-title { color: var(--bs-body-color-dark); }
+
+.offcanvas-body .nav-link {
+    color: var(--offcanvas-color-light); /* Cor dos links no offcanvas */
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+html[data-bs-theme="dark"] .offcanvas-body .nav-link {
+    color: var(--offcanvas-color-dark);
+}
+.offcanvas-body .nav-link:hover,
+.offcanvas-body .nav-link.active {
+    background-color: var(--offcanvas-link-hover-bg-light);
+    color: var(--offcanvas-link-hover-color-light);
+}
+html[data-bs-theme="dark"] .offcanvas-body .nav-link:hover,
+html[data-bs-theme="dark"] .offcanvas-body .nav-link.active {
+    background-color: var(--offcanvas-link-hover-bg-dark);
+    color: var(--offcanvas-link-hover-color-dark);
+}
+.offcanvas-body .nav-link .bi { /* Seu estilo */
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    vertical-align: text-bottom;
+}
+/* Ajuste para o dropdown do usuário no offcanvas (Bootstrap pode precisar de ajuda) */
+html[data-bs-theme="dark"] .offcanvas-body .dropdown-menu {
+    background-color: #343a40; /* Fundo escuro para dropdown no tema escuro */
+    border-color: var(--card-border-color-dark);
+}
+html[data-bs-theme="dark"] .offcanvas-body .dropdown-item {
+    color: #dee2e6; /* Texto claro para itens do dropdown */
+}
+html[data-bs-theme="dark"] .offcanvas-body .dropdown-item:hover {
+    background-color: #495057; /* Fundo de hover para itens do dropdown */
+    color: #ffffff;
+}
+html[data-bs-theme="dark"] .offcanvas-body .dropdown-divider {
+    border-top-color: var(--card-border-color-dark);
+}
+
+
+/* Cards */
+.card { /* Seus estilos de sombra e borda */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--card-border-color-light);
+    background-color: var(--card-bg-light);
+}
+html[data-bs-theme="dark"] .card {
+    border-color: var(--card-border-color-dark);
+    background-color: var(--card-bg-dark);
+}
+.card-header {
+    font-weight: 600; /* Seu estilo */
+    background-color: var(--card-header-bg-light);
+    color: var(--card-header-color-light);
+    border-bottom: 1px solid var(--card-border-color-light);
+}
+html[data-bs-theme="dark"] .card-header {
+    background-color: var(--card-header-bg-dark);
+    color: var(--card-header-color-dark);
+    border-bottom: 1px solid var(--card-border-color-dark);
+}
+/* Para .card-header.bg-primary (usado nos Ações Rápidas, Estatísticas) */
+.card-header.bg-primary {
+    background-color: var(--navbar-bg-light) !important; /* Reutilizando var da navbar light (azul) */
+    color: var(--navbar-brand-color-light) !important;   /* Reutilizando var da navbar light (branco) */
+    border-bottom: 1px solid var(--navbar-bg-light);
+}
+html[data-bs-theme="dark"] .card-header.bg-primary {
+    background-color: var(--navbar-bg-dark) !important; /* Reutilizando var da navbar dark */
+    color: var(--navbar-brand-color-dark) !important;   /* Reutilizando var da navbar dark */
+    border-bottom: 1px solid var(--navbar-bg-dark);
+}
+
+
+/* Tabelas */
+.table th { font-weight: 600; } /* Seu estilo */
+.table thead th { /* Seu estilo de cabeçalho de tabela sticky */
+    position: sticky;
+    top: 0;
+    background-color: var(--table-header-bg-light);
+    color: var(--table-header-color-light);
+    z-index: 10;
+}
+html[data-bs-theme="dark"] .table { /* Para que a tabela e o texto dentro dela fiquem claros no modo escuro */
+    color: var(--bs-body-color-dark);
+}
+html[data-bs-theme="dark"] .table thead th {
+    background-color: var(--table-header-bg-dark);
+    color: var(--table-header-color-dark);
+}
+.table-hover tbody tr:hover { background-color: rgba(0, 0, 0, 0.02); } /* Seu estilo */
+html[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05); /* Hover mais claro no tema escuro */
+}
+/* Adaptações para table-striped no modo escuro */
+html[data-bs-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(255, 255, 255, 0.03); /* Um pouco mais claro para zebrado */
+    color: var(--bs-body-color-dark);
+}
+html[data-bs-theme="dark"] .table-borderless td, 
+html[data-bs-theme="dark"] .table-borderless th {
+    border: none;
+}
+
+
+/* Badges */
+.badge { /* Seu estilo */
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    font-size: 0.85em;
+}
+/* Cores semânticas de badges - podem precisar de ajuste de contraste no modo escuro se o texto for branco */
+/* .badge.bg-success { ... } - Bootstrap deve lidar bem se data-bs-theme estiver no HTML */
+/* Se precisar, adicione overrides específicos para badges no tema escuro */
+
+
+/* Formulários */
+.form-control, .form-select { /* Estilo base para formulários */
+    background-color: var(--card-bg-light); /* Usa fundo de card */
+    color: var(--bs-body-color-light);
+    border: 1px solid var(--card-border-color-light);
+}
+html[data-bs-theme="dark"] .form-control,
+html[data-bs-theme="dark"] .form-select {
+    background-color: var(--form-control-bg-dark); /* Ex: #2b3035 */
+    color: var(--form-control-color-dark);       /* Ex: #dee2e6 ou #fff */
+    border-color: var(--form-control-border-dark); /* Ex: #495057 */
+}
+html[data-bs-theme="dark"] .border.p-3.bg-light.rounded {
+    background-color: var(--form-control-bg-dark) !important;
+    color: var(--form-control-color-dark) !important;
+    border-color: var(--form-control-border-dark) !important;
+}
+html[data-bs-theme="dark"] .form-control::placeholder { color: #6c757d; }
+html[data-bs-theme="dark"] .form-select { /* Ícone do select no tema escuro */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23dee2e6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+.form-control:focus, .form-select:focus { /* Seu estilo de foco */
+    border-color: var(--form-control-focus-border-light);
+    box-shadow: 0 0 0 0.25rem var(--form-control-focus-shadow-light);
+}
+html[data-bs-theme="dark"] .form-control:focus, 
+html[data-bs-theme="dark"] .form-select:focus {
+    border-color: var(--form-control-focus-border-dark);
+    box-shadow: 0 0 0 0.25rem var(--form-control-focus-shadow-dark);
+    background-color: var(--card-bg-dark); /* Mantém o fundo ao focar */
+    color: var(--bs-body-color-dark);
+}
+
+
+/* Botões (Bootstrap deve lidar bem com botões padrão no data-bs-theme, mas podemos refinar) */
+.btn { font-weight: 500; padding: 0.5rem 1rem; } /* Seu estilo */
+.btn i, .btn .bi { margin-right: 0.5rem; vertical-align: text-bottom;} /* Seu estilo */
+/* .btn-primary, .btn-outline-primary, etc. - Bootstrap 5.3+ adapta bem com data-bs-theme. */
+/* Se estiver usando Bootstrap < 5.3 ou quiser mais controle: */
+/*
+html[data-bs-theme="dark"] .btn-primary { ... }
+html[data-bs-theme="dark"] .btn-outline-primary { ... }
+*/
+
+
+/* Links Gerais */
+a {
+    color: var(--link-color-light);
+    text-decoration: none;
+}
+html[data-bs-theme="dark"] a {
+    color: var(--link-color-dark);
+}
+a:hover {
+    color: var(--link-hover-color-light);
+    text-decoration: underline;
+}
+html[data-bs-theme="dark"] a:hover {
+    color: var(--link-hover-color-dark);
+}
+
+
+/* Títulos */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--bs-emphasis-color-light); /* Usa a cor de ênfase do tema */
+    font-weight: 600;
+}
+html[data-bs-theme="dark"] h1, 
+html[data-bs-theme="dark"] h2, 
+html[data-bs-theme="dark"] h3, 
+html[data-bs-theme="dark"] h4, 
+html[data-bs-theme="dark"] h5, 
+html[data-bs-theme="dark"] h6 {
+    color: var(--bs-emphasis-color-dark);
+}
+
+
+/* Mantendo seus outros estilos que não são diretamente sobre cores primárias */
+.card-header-tabs .nav-link { color: #495057; font-weight: 500; }
+html[data-bs-theme="dark"] .card-header-tabs .nav-link { color: var(--bs-body-color-dark); }
+
+.card-header-tabs .nav-link.active {
+    color: var(--link-color-light);
+    background-color: transparent;
+    border-bottom: 3px solid var(--link-color-light);
+}
+html[data-bs-theme="dark"] .card-header-tabs .nav-link.active {
+    color: var(--link-color-dark);
+    border-bottom-color: var(--link-color-dark);
+}
+
+/* ... (resto dos seus estilos como .tab-content, .list-group-item, responsividade, etc. podem ser mantidos como estão ou ajustados se necessário para o tema escuro) ... */
+
+/* Assegure-se que as cores de texto dentro de elementos com .bg-light ou .text-muted sejam legíveis em ambos os temas */
+html[data-bs-theme="dark"] .bg-light { /* .bg-light no tema escuro deve ser um cinza escuro */
+    background-color: #2b3035 !important; 
+    color: #dee2e6 !important; /* Texto claro sobre esse fundo escuro */
+}
+html[data-bs-theme="dark"] .text-muted {
+    color: #adb5bd !important; /* Um cinza mais claro para texto 'muted' no tema escuro */
+}
+
+/* Ajustes para o container principal (mantendo o seu) */
+.container {
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+}

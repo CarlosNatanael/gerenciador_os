@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Abrir OS{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Abertura de Ordem de Serviço</h2>
+        {% if session.tipo == 'admin' or session.tipo == 'master-admin' %}
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar ao Dashboard Admin
+            </a>
+        {% elif session.tipo == 'solicitante' %}
+            <a href="{{ url_for('minhas_os') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Ver Minhas OS
+            </a>
+        {% endif %}
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('abrir_os') }}">
+                <div class="mb-3">
+                    <label for="equipamento" class="form-label">Equipamento <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="equipamento" name="equipamento" value="{{ request.form.equipamento if request.form else '' }}" required>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="local" class="form-label">Local <span class="text-danger">*</span></label>
+                    <select class="form-select" id="local" name="local" required>
+                        <option value="">Selecione um local...</option>
+                        {% for local_obj in locais %} {# 'locais' precisa ser passado pela rota Flask #}
+                        <option value="{{ local_obj.nome }}" {% if request.form and request.form.local == local_obj.nome %}selected{% endif %}>
+                            {{ local_obj.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="setor" class="form-label">Setor (Opcional)</label>
+                    <input type="text" class="form-control" id="setor" name="setor" value="{{ request.form.setor if request.form else '' }}">
+                </div>
+            
+                <div class="mb-3">
+                    <label for="problema" class="form-label">Descrição do Problema <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="problema" name="problema" rows="4" required>{{ request.form.problema if request.form else '' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Prioridade <span class="text-danger">*</span></label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="prioridade" id="normal" value="normal" {% if not request.form or request.form.prioridade == 'normal' %}checked{% endif %} required>
+                            <label class="form-check-label" for="normal">Normal</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="prioridade" id="urgente" value="urgente" {% if request.form and request.form.prioridade == 'urgente' %}checked{% endif %} required>
+                            <label class="form-check-label" for="urgente">Urgente</label>
+                        </div>
+                        {# Você pode adicionar outras prioridades se definidas no seu sistema, ex: 'alta', 'baixa' #}
+                        {# Lembre-se que a tabela ordens_servico tem CHECK(prioridade IN ('baixa', 'normal', 'alta', 'urgente')) #}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    {% if session.tipo == 'admin' or session.tipo == 'master-admin' %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">
+                            <i class="bi bi-arrow-left"></i> Voltar ao Dashboard Admin
+                        </a>
+                    {% elif session.tipo == 'solicitante' %}
+                        <a href="{{ url_for('minhas_os') }}" class="btn btn-outline-secondary me-2">
+                            <i class="bi bi-arrow-left"></i> Ver Minhas OS
+                        </a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send"></i> Enviar OS
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

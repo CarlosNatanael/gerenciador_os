@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes da OS #{{ os.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Detalhes da OS #{{ os.id }}</h2>
+        <a href="{{ url_for('manutencao_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para Painel
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Equipamento: {{ os.equipamento|default('Não especificado') }}</h5>
+            <span class="badge bg-{% if os.prioridade == 'urgente' %}danger{% elif os.prioridade == 'alta' %}warning text-dark{% elif os.prioridade == 'normal' %}primary{% else %}secondary{% endif %}">
+                Prioridade: {{ os.prioridade|capitalize if os.prioridade else 'N/A' }}
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h6>Informações da Solicitação</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item ps-0">
+                            <strong>Status:</strong> 
+                            <span class="badge rounded-pill 
+                                         {% if os.status == 'Aberta' %}bg-warning text-dark
+                                         {% elif os.status == 'Concluída' %}bg-success
+                                         {% elif os.status == 'Em andamento' %}bg-info text-dark
+                                         {% elif os.status == 'Agendada' %}bg-primary
+                                         {% elif os.status == 'Cancelada' %}bg-danger
+                                         {% else %}bg-secondary
+                                         {% endif %}">
+                                {{ os.status }}
+                            </span>
+                        </li>
+                        <li class="list-group-item ps-0">
+                            <strong>Data Abertura:</strong> {{ os.data }}
+                        </li>
+                        {% if os.inicio %}
+                        <li class="list-group-item ps-0">
+                            <strong>Data Início do Reparo:</strong> {{ os.inicio }}
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item ps-0">
+                            <strong>Solicitante:</strong> {{ solicitante.nome if solicitante else 'N/A' }}
+                        </li>
+                        {% if tecnico %} {# Técnico responsável principal, se houver #}
+                        <li class="list-group-item ps-0">
+                            <strong>Executante Responsável (Inicial):</strong> {{ tecnico.nome }}
+                        </li>
+                        {% endif %}
+                        {% if os.local %}
+                        <li class="list-group-item ps-0">
+                            <strong>Local:</strong> {{ os.local }}
+                        </li>
+                        {% endif %}
+                        {% if os.setor %}
+                        <li class="list-group-item ps-0">
+                            <strong>Setor:</strong> {{ os.setor }}
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Descrição do Problema</h6>
+                    <div class="border p-3 bg-light rounded" style="min-height: 100px;">
+                        {{ os.problema|default('Nenhuma descrição fornecida.') }}
+                    </div>
+                </div>
+            </div>
+
+            {% if os.status != 'Concluída' and os.status != 'Cancelada' %}
+            <hr>
+            <h5 class="mt-4 mb-3">Registrar Conclusão da OS</h5>
+            <form method="POST" action="{{ url_for('concluir_os', id_os=os.id) }}">
+                <div class="mb-3">
+                    <label for="solucao" class="form-label">Solução Aplicada <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="solucao" name="solucao" rows="4" required>{{ request.form.solucao if request.form else '' }}</textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="data_conclusao_manual" class="form-label">Data da Conclusão <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="data_conclusao_manual" name="data_conclusao_manual" 
+                               value="{{ request.form.data_conclusao_manual if request.form else (datetime.now().strftime('%Y-%m-%d') if not request.form else '') }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="hora_conclusao_manual" class="form-label">Hora da Conclusão <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" id="hora_conclusao_manual" name="hora_conclusao_manual"
+                               value="{{ request.form.hora_conclusao_manual if request.form else (datetime.now().strftime('%H:%M') if not request.form else '') }}" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Executantes Participantes <span class="text-danger">*</span></label>
+                    <div id="tecnicos_participantes_checkbox_group" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                    {% if todos_tecnicos_manutencao %}
+                        {% for tecnico_manutencao in todos_tecnicos_manutencao %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                    name="tecnicos_participantes" 
+                                    value="{{ tecnico_manutencao.id }}" 
+                                    id="tecnico_{{ tecnico_manutencao.id }}"
+                                    {% if request.form and tecnico_manutencao.id|string in request.form.getlist('tecnicos_participantes') %}
+                                        checked
+                                    {% elif not request.form.getlist('tecnicos_participantes') and session.user_id == tecnico_manutencao.id %}
+                                        checked {# Pré-seleciona o usuário logado se nenhum participante foi submetido ainda #}
+                                    {% endif %}>
+                            <label class="form-check-label" for="tecnico_{{ tecnico_manutencao.id }}">
+                            {{ tecnico_manutencao.nome }} ({{ tecnico_manutencao.especialidade|capitalize if tecnico_manutencao.especialidade else 'Manutenção' }})
+                            </label>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted mb-0">Nenhum executante de manutenção cadastrado/disponível.</p>
+                    {% endif %}
+                </div>
+                <small class="form-text text-muted">Marque todos os executantes que participaram. O executante logado é pré-selecionado.</small>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                <a href="{{ url_for('agendar_os', id_os=os.id) }}" class="btn btn-outline-primary me-2">
+                    <i class="bi bi-calendar-event"></i> Agendar Reparo 
+                </a>                    
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-circle-fill me-2"></i> Marcar OS como Concluída
+                    </button>
+                </div>
+            </form>
+            {% elif os.status == 'Concluída' %}
+            <hr>
+            <div class="mt-4">
+                <h5>Informações da Conclusão</h5>
+                <div class="border p-3 bg-light rounded mb-3">
+                    <p class="mb-1"><strong>Solução Aplicada:</strong></p>
+                    <p style="white-space: pre-wrap;">{{ os.solucao|default('Não registrada.') }}</p>
+                </div>
+                {% if os.fim %}
+                <p><strong>Concluída em:</strong> {{ os.fim }}</p>
+                {% endif %}
+                {% if os.tempo_reparo is not none %}
+                <p class="text-muted mb-2">
+                    <small>Tempo de reparo: {{ "%.0f"|format(os.tempo_reparo) }} minutos</small>
+                </p>
+                {% endif %}
+                
+                <h6>Técnicos Participantes na Conclusão:</h6>
+                {% if participantes_conclusao %}
+                    <ul class="list-group list-group-flush">
+                        {% for part in participantes_conclusao %}
+                        <li class="list-group-item py-1 px-0">
+                            <i class="bi bi-person-check-fill me-2"></i>{{ part.nome }} ({{ part.especialidade|capitalize if part.especialidade else 'Manutenção' }})
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                <p class="text-muted">Nenhum participante registrado para a conclusão.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if historico and historico|length > 0 %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Histórico de Alterações da OS</h5>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for item in historico %}
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ item.acao }}</h6>
+                    <small class="text-muted">{{ item.data_alteracao }}</small>
+                </div>
+                <p class="mb-1 small text-muted">Por: {{ item.usuario_nome|default('Sistema') }}</p>
+                {% if item.observacao %}
+                <p class="mb-0 small"><small>Obs: {{ item.observacao }}</small></p>
+                {% endif %}
+                 {% if item.campo_alterado %}
+                <p class="mb-0 small fst-italic"><small>Campo: {{item.campo_alterado}}, Anterior: '{{item.valor_anterior}}', Novo: '{{item.novo_valor}}'</small></p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{# Adicionar datetime.now() ao contexto do Jinja para pré-preencher data/hora #}
+{# Isso é mais para conveniência, a rota Flask deve ter a lógica principal #}
+{# Se você não passou 'datetime' para o template via Flask, os valores padrão abaixo não funcionarão #}
+{# datetime.now().strftime('%Y-%m-%d') e datetime.now().strftime('%H:%M') #}
+{# A forma como está no value="" dos inputs de data/hora é uma alternativa se 'datetime' não estiver no contexto #}
+<script>
+// Opcional: Lógica JavaScript se precisar de interações mais complexas no formulário.
+// Por exemplo, validar se a data/hora de conclusão não é anterior à data de início.
+// Mas a validação principal deve estar no backend (Python/Flask).
+</script>
+{% endblock %}

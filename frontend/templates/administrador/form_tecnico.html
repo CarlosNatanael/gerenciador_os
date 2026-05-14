@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="my-4">{{ titulo }}</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            {# A action do form será dinâmica se usarmos este template para editar também #}
+            <form method="POST" 
+                  action="{{ url_for('adicionar_tecnico') if acao == 'Adicionar' else url_for('editar_tecnico', id_tecnico=tecnico.id) }}">
+                
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome Completo do Técnico <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nome" name="nome" 
+                           value="{{ tecnico.nome if tecnico else '' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="tipo_tecnico" class="form-label">Tipo de Executante <span class="text-danger">*</span></label>
+                    <select class="form-select" id="tipo_tecnico" name="tipo_tecnico" required>
+                        <option value="">Selecione o tipo...</option>
+                        <option value="eletricista" {% if tecnico and tecnico.tipo_tecnico == 'eletricista' %}selected{% endif %}>
+                            Eletricista
+                        </option>
+                        <option value="mecanico" {% if tecnico and tecnico.tipo_tecnico == 'mecanico' %}selected{% endif %}>
+                            Mecânico
+                        </option>
+                    </select>
+                </div>
+
+                {% if acao == 'Editar' %} {# Mostrar campo 'Ativo' apenas na edição #}
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="ativo" name="ativo" value="1" 
+                           {% if tecnico and tecnico.ativo %}checked{% endif %}>
+                    <label class="form-check-label" for="ativo">Ativo</label>
+                </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{{ url_for('listar_tecnicos') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i> Salvar {{ 'Técnico' if acao == 'Adicionar' else 'Alterações' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

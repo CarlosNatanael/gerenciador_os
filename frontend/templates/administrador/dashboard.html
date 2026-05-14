@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Administrativo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Dashboard Administrativo</h2>
+    
+    <div class="row">
+        <!-- Cartão de Estatísticas -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Estatísticas de OS</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ stats.os.total|default(0) }}</h3>
+                                    <p class="text-muted mb-0">Total de OS</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ "%.1f"|format(stats.os.media_tempo|default(0.0)) }}</h3>
+                                    <p class="text-muted mb-0">Média Tempo (min)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ stats.os.abertas|default(0) }}</h3>
+                                    <p class="mb-0">Abertas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ stats.os.concluidas|default(0) }}</h3>
+                                    <p class="mb-0">Concluídas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ stats.os.em_andamento|default(0) }}</h3>
+                                    <p class="mb-0">Em Andamento</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ stats.os.agendadas|default(0) }}</h3>
+                                    <p class="mb-0">Agendadas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ stats.registros_diretos.total_registros|default(0) }}</h3>
+                                    <p class="mb-0">Total Registros de Manutenção</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body text-center">
+                                    <h3>{{ stats.registros_diretos.pendente_aprovacao|default(0) }}</h3>
+                                    <p class="mb-0">Total Registros Concluídas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cartão de Ações Rápidas -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Ações Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {# --- BOTÃO MODIFICADO AQUI --- #}
+                        <a href="{{ url_for('gerar_relatorio_os') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-file-earmark-excel-fill"></i> Gerar Relatório de OS
+                        </a>
+                        <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-people"></i> Gerenciar Usuários
+                        </a>
+                         <a href="{{ url_for('listar_tecnicos') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-person-badge-fill"></i> Gerenciar Técnicos
+                        </a>
+                        <a href="{{ url_for('listar_registros_diretos') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-journal-check"></i> Ver Registros de Manutenção
+                        </a>
+                        <a href="{{ url_for('admin_configuracoes') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-gear"></i> Configurações Gerais
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista Completa de OS -->
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Últimas Ordens de Serviço</h5>
+            {# <a href="#" class="btn btn-sm btn-light disabled" title="Funcionalidade em desenvolvimento">Exportar (Em breve)</a> #}
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Equipamento</th>
+                            <th>Solicitante</th>
+                            <th>Data Abertura</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for os_item in todas_os %}
+                        <tr>
+                            <td>#{{ os_item.id }}</td>
+                            <td>{{ os_item.equipamento }}</td>
+                            <td>{{ os_item.solicitante_nome }}</td>
+                            <td>{{ os_item.data }}</td>
+                            <td>
+                                <span class="badge bg-{% if os_item.prioridade == 'urgente' %}danger{% elif os_item.prioridade == 'alta' %}warning text-dark{% elif os_item.prioridade == 'normal' %}primary{% else %}secondary{% endif %}">
+                                    {{ os_item.prioridade|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill 
+                                             {% if os_item.status == 'Aberta' %}bg-warning text-dark
+                                             {% elif os_item.status == 'Concluída' %}bg-success
+                                             {% elif os_item.status == 'Em andamento' %}bg-info text-dark
+                                             {% elif os_item.status == 'Agendada' %}bg-primary
+                                             {% elif os_item.status == 'Cancelada' %}bg-danger
+                                             {% else %}bg-secondary
+                                             {% endif %}">
+                                    {{ os_item.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('detalhe_os_admin', id_os=os_item.id) }}" class="btn btn-sm btn-outline-primary">
+                                    Detalhes
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Nenhuma ordem de serviço encontrada</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

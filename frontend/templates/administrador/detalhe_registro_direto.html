@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Registro de Manutenção #{{ registro.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Detalhes do Registro #{{ registro.id }}</h2>
+        <a href="{{ url_for('listar_registros_diretos') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para Lista
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Equipamento: {{ registro.equipamento_afetado|default('Não especificado') }}</h5>
+            <span class="badge 
+                         {% if registro.status == 'Pendente Aprovacao' %}bg-warning text-dark
+                         {% elif registro.status == 'Concluido' %}bg-success
+                         {% elif registro.status == 'Cancelado' %}bg-danger
+                         {% else %}bg-secondary
+                         {% endif %}">
+                Status: {{ registro.status }}
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-7">
+                    <h6>Informações do Registro</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item ps-0"><strong>Data da Execução:</strong> {{ registro.data_execucao }}</li>
+                        <li class="list-group-item ps-0"><strong>Duração:</strong> {{ registro.duracao_minutos }} minutos</li>
+                        <li class="list-group-item ps-0"><strong>Registrado por:</strong> {{ registro.nome_criador }} em {{ registro.data_registro }}</li>
+                        {% if registro.status == 'Concluido' and registro.concluido_por_admin_id %}
+                        <li class="list-group-item ps-0"><strong>Concluído/Aprovado por:</strong> {{ registro.nome_admin_conclusao }} em {{ registro.data_conclusao_admin }}</li>
+                        {% endif %}
+                    </ul>
+                    
+                    <h6 class="mt-3">Técnicos Participantes:</h6>
+                    {% if participantes %}
+                        <ul class="list-group list-group-flush">
+                            {% for part in participantes %}
+                            <li class="list-group-item py-1 px-0">
+                                <i class="bi bi-person-check-fill me-2"></i>{{ part.nome }} ({{ part.especialidade|capitalize if part.especialidade else 'Manutenção' }})
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Nenhum técnico participante informado.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-5">
+                    <h6>Descrição do Serviço Realizado:</h6>
+                    <div class="border p-3 bg-light rounded mb-3" style="min-height: 100px; white-space: pre-wrap;">{{ registro.descricao_servico }}</div>
+                    
+                    {% if registro.observacoes %}
+                    <h6>Observações:</h6>
+                    <div class="border p-3 bg-light rounded" style="min-height: 60px; white-space: pre-wrap;">{{ registro.observacoes }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if registro.status == 'Pendente Aprovacao' %}
+        <div class="card-footer text-end">
+            <form method="POST" action="{{ url_for('processar_registro_direto', id_registro=registro.id) }}" class="d-inline">
+                <input type="hidden" name="acao" value="concluir">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-check-circle-fill"></i> Concluir/Aprovar Registro
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('processar_registro_direto', id_registro=registro.id) }}" class="d-inline">
+                <input type="hidden" name="acao" value="cancelar">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja cancelar este registro?');">
+                    <i class="bi bi-x-circle-fill"></i> Cancelar Registro
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

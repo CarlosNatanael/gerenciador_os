@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if local else 'Novo' }} Local{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">{{ 'Editar' if local else 'Adicionar Novo' }} Local</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome do Local <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="{{ local.nome if local else '' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">Descrição (Opcional)</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="3">{{ local.descricao if local else '' }}</textarea>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="ativo" name="ativo" value="1" {% if local and local.ativo or not local %}checked{% endif %}>
+                    <label class="form-check-label" for="ativo">Ativo (disponível para seleção)</label>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{{ url_for('listar_locais') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Salvar Local
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

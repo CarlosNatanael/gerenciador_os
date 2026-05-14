@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações do Sistema{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Configurações do Sistema</h2>
+    
+    <div class="list-group">
+        <a href="{{ url_for('listar_locais') }}" class="list-group-item list-group-item-action">
+            <i class="bi bi-geo-alt-fill me-2"></i> Gerenciar Locais
+        </a>
+        </div>
+</div>
+<div class="mt-3">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar para Dashboard
+    </a>
+</div>
+{% endblock %}

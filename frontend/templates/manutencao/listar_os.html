@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}OS Pendentes{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Ordens de Serviço Pendentes</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Equipamento</th>
+                <th>Data Abertura</th>
+                <th>Prioridade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for os in os_abertas %}
+            <tr>
+                <td>{{ os['id'] }}</td>
+                <td>{{ os['equipamento'] }}</td>
+                <td>{{ os['data'] }}</td>
+                <td>
+                    {% if os['prioridade'] == 'urgente' %}
+                        <span class="badge bg-danger">Urgente</span>
+                    {% else %}
+                        <span class="badge bg-primary">Normal</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if os.status == 'Agendada' %}
+                        <a href="{{ url_for('iniciar_os', id=os.id) }}" class="btn btn-sm btn-success">Iniciar</a>
+                    {% endif %}
+                    <a href="{{ url_for('detalhe_os', id_os=os['id']) }}" class="btn btn-sm btn-info">Detalhes</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">Nenhuma OS pendente</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

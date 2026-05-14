@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes OS #{{ os.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Detalhes da OS #{{ os.id }}</h2>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6"> <h6>Informações Básicas</h6>
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="40%">Solicitante:</th>
+                            <td>{{ solicitante.nome if solicitante else 'N/A' }} ({{ solicitante.email if solicitante else 'N/A' }})</td>
+                        </tr>
+                        {% if tecnico %} {# 'tecnico' agora é tecnico_sistema_info (usuário do sistema) #}
+                        <tr>
+                            <th>Agendado/Iniciado por (Usuário Sistema):</th>
+                            <td>{{ tecnico.nome|default('N/A') }}</td>
+                        </tr>
+                        {% endif %}
+                        
+                        <tr>
+                            <th>Data Abertura:</th>
+                            <td>{{ os.data }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prioridade:</th>
+                            <td>
+                                <span class="badge bg-{% if os.prioridade == 'urgente' %}danger{% elif os.prioridade == 'alta' %}warning text-dark{% elif os.prioridade == 'normal' %}primary{% else %}secondary{% endif %}">
+                                    {{ os.prioridade|capitalize if os.prioridade else 'N/A' }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>
+                                <span class="badge rounded-pill 
+                                             {% if os.status == 'Aberta' %}bg-warning text-dark
+                                             {% elif os.status == 'Concluída' %}bg-success
+                                             {% elif os.status == 'Em andamento' %}bg-info text-dark
+                                             {% elif os.status == 'Agendada' %}bg-primary
+                                             {% elif os.status == 'Cancelada' %}bg-danger
+                                             {% else %}bg-secondary
+                                             {% endif %}">
+                                    {{ os.status|capitalize if os.status else 'N/A' }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% if os.local %}
+                        <tr>
+                            <th>Local:</th>
+                            <td>{{ os.local }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if os.setor %}
+                        <tr>
+                            <th>Setor:</th>
+                            <td>{{ os.setor }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if os.fim %}
+                        <tr>
+                            <th>Data Conclusão:</th>
+                            <td>{{ os.fim }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </div>
+
+                <div class="col-md-6"> 
+                    <div>
+                        <h5 class="mb-0">Equipamento: {{ os.equipamento|default('Não especificado') }}</h5>
+                    </div>
+                    <br>
+                    <h6>Descrição do Problema</h6>
+                    <div class="border p-3 bg-light rounded mb-3">
+                        {{ os.problema|default('N/A') }}
+                    </div>
+
+                    {% if os.solucao is not none %}
+                    <h6>Solução Aplicada</h6>
+                    <div class="border p-3 bg-light rounded">
+                        {{ os.solucao }}
+                        {% if os.tempo_reparo is not none %}
+                        <div class="mt-2 text-muted">
+                            <small>Tempo de reparo: {{ "%.0f"|format(os.tempo_reparo) }} minutos</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% elif os.status == 'Concluída' %} {# Se está concluída mas sem solução registrada #}
+                    <div class="alert alert-info mt-3">
+                        <strong>Solução não registrada para esta OS concluída.</strong>
+                    </div>
+                    {% elif os.status != 'Cancelada' %}
+                     <div class="alert alert-warning mt-3">
+                        <strong>Solução ainda não registrada.</strong>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Exibição dos técnicos participantes individuais #}
+            {% if participantes %}
+            <hr class="my-4">
+            <h6>Equipe de Executantes Participantes</h6>
+            <div class="d-flex flex-wrap gap-2">
+                {% for part in participantes %}
+                <div class="border rounded p-2 bg-light mb-2">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-fill me-2"></i>
+                        <div>
+                            <div class="fw-bold">{{ part.nome }}</div>
+                            {% if part.funcao %}
+                            <div class="mt-1">
+                                <span class="badge bg-info text-dark">{{ part.funcao }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% elif os.status == 'Concluída' %}
+             <hr class="my-4">
+             <h6>Equipe de Executantes Participantes</h6>
+             <p class="text-muted">Nenhum técnico participante registrado para esta OS.</p>
+            {% endif %}
+
+        </div> {# Fim do card-body #}
+    </div> {# Fim do card mb-4 #}
+
+    <!-- Histórico de Alterações -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Histórico de Alterações</h5>
+        </div>
+        <div class="card-body p-0"> {# Removido padding do card-body para o list-group ocupar toda a largura #}
+            {% if historico %}
+            <div class="list-group list-group-flush">
+                {% for item in historico %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="mb-1">{{ item['acao'] }}</h6>
+                        <small class="text-muted">{{ item['data_alteracao'] }}</small>
+                    </div>
+                    <p class="mb-1 small text-muted">Por: {{ item['usuario_nome']|default('Sistema') }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted p-3">Nenhum histórico registrado para esta OS.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

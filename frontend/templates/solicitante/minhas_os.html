@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Ordens de Serviço{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Minhas Ordens de Serviço em Aberto</h2>
+    
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Equipamento</th>
+                    <th>Data Abertura</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    <th>Agendamento</th>
+                    <th>Técnico</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for os in os_abertas %}
+                <tr>
+                    <td>{{ os.id }}</td>
+                    <td>{{ os.equipamento }}</td>
+                    <td>{{ os.data }}</td>
+                    <td>
+                        <span class="badge bg-{% if os.prioridade == 'urgente' %}danger{% else %}primary{% endif %}">
+                            {{ os.prioridade }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-{% if os.status == 'Aberta' %}warning{% else %}info{% endif %}">
+                            {{ os.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if os.data_agendamento %}
+                            {{ os.data_agendamento }} ({{ os.horario_agendamento }})
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if os.tecnico_nome %}
+                            {{ os.tecnico_nome }}
+                        {% else %}
+                            Não atribuído
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">Nenhuma ordem de serviço em aberto</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

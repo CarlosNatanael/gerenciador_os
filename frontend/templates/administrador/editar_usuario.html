@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Usuário{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Editar Usuário: {{ usuario.nome }}</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('editar_usuario', id_usuario_alvo=usuario.id) }}">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="nome" name="nome" value="{{ usuario.nome }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="usuario" class="form-label">Nome de Usuário <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="usuario" name="usuario" value="{{ usuario.usuario }}" required>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tipo" class="form-label">Tipo de Usuário <span class="text-danger">*</span></label>
+                        <select class="form-select" id="tipo" name="tipo" required 
+                                {% if not pode_alterar_tipo %}disabled{% endif %}>
+                            {% for tipo_opt in tipos_disponiveis %}
+                                <option value="{{ tipo_opt.value }}" {% if usuario.tipo == tipo_opt.value %}selected{% endif %}>
+                                    {{ tipo_opt.label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if not pode_alterar_tipo %}
+                            <input type="hidden" name="tipo" value="{{ usuario.tipo }}">
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6" id="campo_especialidade">
+                        <label for="especialidade" class="form-label">Especialidade (Técnico) <span class="text-danger">*</span></label>
+                        <select class="form-select" id="especialidade" name="especialidade"
+                                {% if usuario.tipo == 'manutencao' %}required{% endif %}>
+                            <option value="">Selecione...</option>
+                            <option value="eletricista" {% if usuario.especialidade == 'eletricista' %}selected{% endif %}>Eletricista</option>
+                            <option value="mecanico" {% if usuario.especialidade == 'mecanico' %}selected{% endif %}>Mecânico</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mt-4">
+                            <input type="checkbox" class="form-check-input" id="ativo" name="ativo" 
+                                   {% if usuario.ativo %}checked{% endif %}
+                                   {% if usuario.tipo == 'master-admin' and usuario.id == session.user_id and not (usuarios|selectattr('tipo', 'equalto', 'master-admin')|selectattr('ativo')|list|length > 1) %}
+                                       disabled title="Não é possível desativar o único Master Administrador ativo."
+                                   {% endif %}>
+                            <label class="form-check-label" for="ativo">Usuário Ativo</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
+                    <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i> Salvar Alterações
+                </button>
+                </div>
+            </form>
+            
+            <hr>
+            
+            <h5 class="mt-4">Alterar Senha</h5>
+            <form method="POST" action="{{ url_for('alterar_senha_usuario', id_usuario_alvo=usuario.id) }}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nova_senha" class="form-label">Nova Senha <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="nova_senha" name="nova_senha" required>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end mb-3">
+                        <button type="submit" class="btn btn-warning w-100">
+                           <i class="bi bi-key-fill me-1"></i> Alterar Senha
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tipoSelect = document.getElementById('tipo');
+    const especialidadeField = document.getElementById('campo_especialidade');
+    const especialidadeSelect = document.getElementById('especialidade');
+
+    function toggleEspecialidadeField() {
+        if (tipoSelect.value === 'manutencao') {
+            especialidadeField.style.display = 'block';
+            especialidadeSelect.required = true;
+        } else {
+            especialidadeField.style.display = 'none';
+            especialidadeSelect.required = false;
+            if (especialidadeSelect.value) { // Limpa se não for tipo manutencao
+                 // especialidadeSelect.value = ''; // Comentado para manter valor se já estiver preenchido e for erro de validação
+            }
+        }
+    }
+
+    if (tipoSelect) {
+        // Se o select de tipo estiver desabilitado, não adiciona o listener
+        if (!tipoSelect.disabled) {
+            tipoSelect.addEventListener('change', toggleEspecialidadeField);
+        }
+        // Chama a função no carregamento para o caso de o formulário já vir com 'manutencao' selecionado
+        toggleEspecialidadeField(); 
+    }
+});
+</script>
+{% endblock %}

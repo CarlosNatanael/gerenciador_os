@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Registros de Manutenção Direta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Registros de Manutenção Direta</h2>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-header">
+            Lista de Registros
+        </div>
+        <div class="card-body">
+            {% if registros %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data Execução</th>
+                            <th>Equipamento</th>
+                            <th>Criado Por</th>
+                            <th>Duração (min)</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in registros %}
+                        <tr>
+                            <td>#{{ registro.id }}</td>
+                            <td>{{ registro.data_execucao }}</td>
+                            <td>{{ registro.equipamento_afetado|default('N/A') }}</td>
+                            <td>{{ registro.nome_criador }}</td>
+                            <td>{{ registro.duracao_minutos|default('N/A') }}</td>
+                            <td>
+                                <span class="badge 
+                                             {% if registro.status == 'Pendente Aprovacao' %}bg-warning text-dark
+                                             {% elif registro.status == 'Concluido' %}bg-success
+                                             {% elif registro.status == 'Cancelado' %}bg-danger
+                                             {% else %}bg-secondary
+                                             {% endif %}">
+                                    {{ registro.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('detalhe_registro_direto', id_registro=registro.id) }}" class="btn btn-sm btn-info" title="Ver Detalhes">
+                                    <i class="bi bi-eye-fill"></i> Detalhes
+                                </a>
+                                </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">Nenhum registro de manutenção direta encontrado.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

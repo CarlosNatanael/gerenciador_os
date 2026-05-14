@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Registro de Manutenção Direta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Novo Registro de Manutenção Direta</h2>
+        <a href="{{ url_for('manutencao_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para Painel
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('novo_registro_direto') }}">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="data_execucao" class="form-label">Data da Execução <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="data_execucao" name="data_execucao" 
+                               value="{{ request.form.data_execucao if request.form else (datetime.now().strftime('%Y-%m-%d') if datetime else '') }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="hora_execucao" class="form-label">Hora da Execução <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" id="hora_execucao" name="hora_execucao"
+                               value="{{ request.form.hora_execucao if request.form else (datetime.now().strftime('%H:%M') if datetime else '') }}" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="duracao_minutos" class="form-label">Duração da Operação (minutos) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="duracao_minutos" name="duracao_minutos" min="1"
+                               value="{{ request.form.duracao_minutos if request.form else '' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="equipamento_afetado" class="form-label">Equipamento Afetado</label>
+                        <input type="text" class="form-control" id="equipamento_afetado" name="equipamento_afetado"
+                               value="{{ request.form.equipamento_afetado if request.form else '' }}">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="descricao_servico" class="form-label">Descrição do Serviço Realizado <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="descricao_servico" name="descricao_servico" rows="4" required>{{ request.form.descricao_servico if request.form else '' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="observacoes" class="form-label">Observações</label>
+                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ request.form.observacoes if request.form else '' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Executantes Participantes <span class="text-danger">*</span></label>
+                    <div id="tecnicos_participantes_checkbox_group" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                        {% if todos_tecnicos_manutencao %}
+                            {% for tecnico_manutencao in todos_tecnicos_manutencao %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       name="tecnicos_participantes" 
+                                       value="{{ tecnico_manutencao.id }}" 
+                                       id="tecnico_reg_{{ tecnico_manutencao.id }}"
+                                       {% if request.form and tecnico_manutencao.id|string in request.form.getlist('tecnicos_participantes') %}
+                                           checked
+                                       {% elif not request.form.getlist('tecnicos_participantes') and session.user_id == tecnico_manutencao.id %}
+                                           checked {# Pré-seleciona o usuário logado se nenhum participante foi submetido ainda #}
+                                       {% endif %}>
+                                <label class="form-check-label" for="tecnico_reg_{{ tecnico_manutencao.id }}">
+                                    {{ tecnico_manutencao.nome }} ({{ tecnico_manutencao.especialidade|capitalize if tecnico_manutencao.especialidade else 'Manutenção' }})
+                                </label>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">Nenhum executante de manutenção cadastrado/disponível.</p>
+                        {% endif %}
+                    </div>
+                    <small class="form-text text-muted">Marque todos os executantes que participaram. O executante logado é pré-selecionado.</small>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save me-2"></i> Salvar Registro
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+
+</script>
+{% endblock %}

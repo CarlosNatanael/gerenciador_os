@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Agendar OS #{{ os.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Agendar Reparo - OS #{{ os.id }}</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Equipamento:</strong> {{ os.equipamento|default('Não especificado') }}</p>
+            <p><strong>Problema:</strong> {{ os.problema|default('Não especificado') }}</p>
+            <hr>
+            <form method="POST" action="{{ url_for('agendar_os', id_os=os.id) }}">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="data_agendamento" class="form-label">Data para Reparo <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="data_agendamento" name="data_agendamento" 
+                               value="{{ request_form_data.data_agendamento if request_form_data else (os.data_agendamento if os.data_agendamento else (datetime.now().strftime('%Y-%m-%d') if datetime else '')) }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="horario_agendamento" class="form-label">Horário <span class="text-danger">*</span></label>
+                        <select class="form-select" id="horario_agendamento" name="horario_agendamento" required>
+                            {% set horario_selecionado = request_form_data.horario_agendamento if request_form_data else os.horario_agendamento %}
+                            <option value="">Selecione um período...</option>
+                            <option value="08:00-12:00" {% if horario_selecionado == '08:00-12:00' %}selected{% endif %}>Manhã (08:00 - 12:00)</option>
+                            <option value="13:00-17:00" {% if horario_selecionado == '13:00-17:00' %}selected{% endif %}>Tarde (13:00 - 17:00)</option>
+                            <option value="Integral" {% if horario_selecionado == 'Integral' %}selected{% endif %}>Integral (08:00 - 17:00)</option>
+                            {# Adicione outros horários se desejar #}
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Seção de Técnicos Participantes foi REMOVIDA deste formulário -->
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{{ url_for('detalhe_os', id_os=os.id) }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-calendar-check-fill me-2"></i>Confirmar Agendamento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{# Nenhum script específico para seleção de técnicos é necessário aqui agora #}
+<script>
+// Você pode adicionar validações de data/hora aqui se desejar,
+// por exemplo, para impedir agendamentos no passado.
+// Mas a validação principal deve estar no backend.
+document.addEventListener('DOMContentLoaded', function() {
+    const dataAgendamentoInput = document.getElementById('data_agendamento');
+    if (dataAgendamentoInput) {
+        // Opcional: Definir data mínima como hoje, se fizer sentido para o seu fluxo
+        // const hoje = new Date().toISOString().split('T')[0];
+        // dataAgendamentoInput.setAttribute('min', hoje);
+    }
+});
+</script>
+{% endblock %}

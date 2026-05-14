@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Locais{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h2>Gerenciar Locais</h2>
+        <a href="{{ url_for('adicionar_local') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Novo Local
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            {% if locais %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for local in locais %}
+                        <tr>
+                            <td>{{ local.id }}</td>
+                            <td>{{ local.nome }}</td>
+                            <td>{{ local.descricao if local.descricao else '-' }}</td>
+                            <td>
+                                {% if local.ativo %}
+                                    <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inativo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('editar_local', id=local.id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{{ url_for('remover_local', id=local.id) }}" class="btn btn-sm btn-outline-danger" title="Remover" onclick="return confirm('Tem certeza que deseja remover este local? OSs existentes que usam este local não serão alteradas, mas ele não estará mais disponível para seleção.')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">Nenhum local cadastrado.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mt-3">
+        <a href="{{ url_for('admin_configuracoes') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para Configurações
+        </a>
+    </div>
+</div>
+{% endblock %}

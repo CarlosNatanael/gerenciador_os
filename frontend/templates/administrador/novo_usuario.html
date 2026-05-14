@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Usuário{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Adicionar Novo Usuário</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('novo_usuario') }}">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               value="{{ submitted_data.nome if submitted_data else '' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="usuario" class="form-label">Nome de Usuário <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="usuario" name="usuario" 
+                               value="{{ submitted_data.usuario if submitted_data else '' }}" required>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               value="{{ submitted_data.email if submitted_data else '' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="senha" class="form-label">Senha <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="senha" name="senha" required>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="tipo" class="form-label">Tipo de Usuário <span class="text-danger">*</span></label>
+                        <select class="form-select" id="tipo" name="tipo" required>
+                            <option value="">Selecione um tipo...</option>
+                            {% for tipo_opt in tipos_disponiveis %}
+                                <option value="{{ tipo_opt.value }}" 
+                                        {% if submitted_data and submitted_data.tipo == tipo_opt.value %}selected{% endif %}>
+                                    {{ tipo_opt.label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-person-plus-fill me-1"></i> Salvar Usuário
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }} {# Para incluir scripts do tema dark/light se houver #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tipoSelect = document.getElementById('tipo');
+    const especialidadeField = document.getElementById('campo_especialidade');
+    const especialidadeSelect = document.getElementById('especialidade');
+
+    function toggleEspecialidadeField() {
+        if (tipoSelect.value === 'manutencao') {
+            especialidadeField.style.display = 'block';
+            especialidadeSelect.required = true;
+        } else {
+            especialidadeField.style.display = 'none';
+            especialidadeSelect.required = false;
+            especialidadeSelect.value = ''; // Limpa o valor se não for manutenção
+        }
+    }
+
+    if (tipoSelect) {
+        tipoSelect.addEventListener('change', toggleEspecialidadeField);
+        // Chama a função no carregamento para o caso de repopulação do formulário
+        toggleEspecialidadeField(); 
+    }
+});
+</script>
+{% endblock %}
