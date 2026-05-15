@@ -23,6 +23,8 @@
             <p><strong>Problema:</strong> {{ os.problema|default('Não especificado') }}</p>
             <hr>
             <form method="POST" action="{{ url_for('manutencao.agendar_os', id_os=os.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="data_agendamento" class="form-label">Data para Reparo <span class="text-danger">*</span></label>

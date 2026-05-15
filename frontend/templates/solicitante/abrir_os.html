@@ -31,6 +31,7 @@
     <div class="card">
         <div class="card-body">
             <form method="POST" action="{{ url_for('solicitante.abrir_os') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="mb-3">
                     <label for="equipamento" class="form-label">Equipamento <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="equipamento" name="equipamento" value="{{ request.form.equipamento if request.form else '' }}" required>

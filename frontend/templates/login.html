@@ -11,6 +11,8 @@
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('auth.login') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
                     <div class="mb-3">
                         <label for="usuario" class="form-label">Usuário</label>
                         <input type="text" class="form-control" id="usuario" name="usuario" required>

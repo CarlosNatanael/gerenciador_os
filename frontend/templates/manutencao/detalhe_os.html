@@ -87,6 +87,7 @@
             <hr>
             <h5 class="mt-4 mb-3">Registrar Conclusão da OS</h5>
             <form method="POST" action="{{ url_for('manutencao.concluir_os', id_os=os.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="mb-3">
                     <label for="solucao" class="form-label">Solução Aplicada <span class="text-danger">*</span></label>
                     <textarea class="form-control" id="solucao" name="solucao" rows="4" required>{{ request.form.solucao if request.form else '' }}</textarea>
