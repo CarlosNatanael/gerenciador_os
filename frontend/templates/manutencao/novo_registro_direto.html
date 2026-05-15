@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Novo Registro de Manutenção Direta</h2>
-        <a href="{{ url_for('manutencao_dashboard') }}" class="btn btn-outline-secondary">
+        <a href="{{ url_for('manutencao.manutencao_dashboard') }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Voltar para Painel
         </a>
     </div>
@@ -24,7 +24,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="POST" action="{{ url_for('novo_registro_direto') }}">
+            <form method="POST" action="{{ url_for('manutencao.novo_registro_direto') }}">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="data_execucao" class="form-label">Data da Execução <span class="text-danger">*</span></label>

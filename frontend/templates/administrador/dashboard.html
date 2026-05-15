@@ -93,19 +93,19 @@
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         {# --- BOTÃO MODIFICADO AQUI --- #}
-                        <a href="{{ url_for('gerar_relatorio_os') }}" class="btn btn-outline-primary">
+                        <a href="{{ url_for('admin.gerar_relatorio_os') }}" class="btn btn-outline-primary">
                             <i class="bi bi-file-earmark-excel-fill"></i> Gerar Relatório de OS
                         </a>
-                        <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-primary">
+                        <a href="{{ url_for('admin.listar_usuarios') }}" class="btn btn-outline-primary">
                             <i class="bi bi-people"></i> Gerenciar Usuários
                         </a>
-                         <a href="{{ url_for('listar_tecnicos') }}" class="btn btn-outline-primary">
+                         <a href="{{ url_for('admin.listar_tecnicos') }}" class="btn btn-outline-primary">
                             <i class="bi bi-person-badge-fill"></i> Gerenciar Técnicos
                         </a>
-                        <a href="{{ url_for('listar_registros_diretos') }}" class="btn btn-outline-primary">
+                        <a href="{{ url_for('admin.listar_registros_diretos') }}" class="btn btn-outline-primary">
                             <i class="bi bi-journal-check"></i> Ver Registros de Manutenção
                         </a>
-                        <a href="{{ url_for('admin_configuracoes') }}" class="btn btn-outline-primary">
+                        <a href="{{ url_for('admin.admin_configuracoes') }}" class="btn btn-outline-primary">
                             <i class="bi bi-gear"></i> Configurações Gerais
                         </a>
                     </div>
@@ -159,7 +159,7 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ url_for('detalhe_os_admin', id_os=os_item.id) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ url_for('admin.detalhe_os_admin', id_os=os_item.id) }}" class="btn btn-sm btn-outline-primary">
                                     Detalhes
                                 </a>
                             </td>

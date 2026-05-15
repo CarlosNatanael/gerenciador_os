@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Detalhes da OS #{{ os.id }}</h2>
-        <a href="{{ url_for('manutencao_dashboard') }}" class="btn btn-outline-secondary">
+        <a href="{{ url_for('manutencao.manutencao_dashboard') }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Voltar para Painel
         </a>
     </div>
@@ -86,7 +86,7 @@
             {% if os.status != 'Concluída' and os.status != 'Cancelada' %}
             <hr>
             <h5 class="mt-4 mb-3">Registrar Conclusão da OS</h5>
-            <form method="POST" action="{{ url_for('concluir_os', id_os=os.id) }}">
+            <form method="POST" action="{{ url_for('manutencao.concluir_os', id_os=os.id) }}">
                 <div class="mb-3">
                     <label for="solucao" class="form-label">Solução Aplicada <span class="text-danger">*</span></label>
                     <textarea class="form-control" id="solucao" name="solucao" rows="4" required>{{ request.form.solucao if request.form else '' }}</textarea>
@@ -132,7 +132,7 @@
                 <small class="form-text text-muted">Marque todos os executantes que participaram. O executante logado é pré-selecionado.</small>
                 </div>
                 <div class="d-flex justify-content-end mt-4">
-                <a href="{{ url_for('agendar_os', id_os=os.id) }}" class="btn btn-outline-primary me-2">
+                <a href="{{ url_for('manutencao.agendar_os', id_os=os.id) }}" class="btn btn-outline-primary me-2">
                     <i class="bi bi-calendar-event"></i> Agendar Reparo 
                 </a>                    
                 </div>
@@ -205,14 +205,5 @@
 
 {% block scripts %}
 {{ super() }}
-{# Adicionar datetime.now() ao contexto do Jinja para pré-preencher data/hora #}
-{# Isso é mais para conveniência, a rota Flask deve ter a lógica principal #}
-{# Se você não passou 'datetime' para o template via Flask, os valores padrão abaixo não funcionarão #}
-{# datetime.now().strftime('%Y-%m-%d') e datetime.now().strftime('%H:%M') #}
-{# A forma como está no value="" dos inputs de data/hora é uma alternativa se 'datetime' não estiver no contexto #}
-<script>
-// Opcional: Lógica JavaScript se precisar de interações mais complexas no formulário.
-// Por exemplo, validar se a data/hora de conclusão não é anterior à data de início.
-// Mas a validação principal deve estar no backend (Python/Flask).
 </script>
 {% endblock %}

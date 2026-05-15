@@ -20,7 +20,7 @@
             <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Toggle navigation">
                 <i class="bi bi-list" style="font-size: 1.5rem;"></i>
             </button>
-            <a class="navbar-brand mx-auto" href="{{ url_for('index') }}">Sistema OS</a>
+            <a class="navbar-brand mx-auto" href="{{ url_for('auth.index') }}">Sistema OS</a>
             <div style="width: 40px;"> </div>
         </div>
     </nav>
@@ -33,91 +33,91 @@
         <div class="offcanvas-body d-flex flex-column">
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('index') }}">
+                    <a class="nav-link" href="{{ url_for('auth.index') }}">
                         <i class="bi bi-house-door-fill"></i>Página Inicial
                     </a>
                 </li>
                  {% if session.tipo == 'solicitante' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('abrir_os') }}">
+                        <a class="nav-link" href="{{ url_for('solicitante.abrir_os') }}">
                             <i class="bi bi-pencil-square"></i>Abrir OS
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('minhas_os') }}">
+                        <a class="nav-link" href="{{ url_for('solicitante.minhas_os') }}">
                             <i class="bi bi-card-list"></i>Minhas OSs
                         </a>
                     </li>
                 {% elif session.tipo == 'manutencao' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('manutencao_dashboard') }}">
+                        <a class="nav-link" href="{{ url_for('manutencao.manutencao_dashboard') }}">
                             <i class="bi bi-clipboard-data-fill"></i>Painel de OS
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('novo_registro_direto') }}">
+                        <a class="nav-link" href="{{ url_for('manutencao.novo_registro_direto') }}">
                             <i class="bi bi-journal-check"></i>Registro de Manutenção
                         </a>
                     </li>
                 {% elif session.tipo == 'admin' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                        <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">
                             <i class="bi bi-speedometer2"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('abrir_os') }}">
+                        <a class="nav-link" href="{{ url_for('solicitante.abrir_os') }}">
                              <i class="bi bi-pencil-square"></i>Abrir OS
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('listar_registros_diretos') }}">
+                        <a class="nav-link" href="{{ url_for('admin.listar_registros_diretos') }}">
                             <i class="bi bi-journal-check"></i>Ver Registros Manutenção
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_configuracoes') }}">
+                        <a class="nav-link" href="{{ url_for('admin.admin_configuracoes') }}">
                              <i class="bi bi-sliders"></i>Configurações
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('listar_tecnicos') }}">
+                        <a class="nav-link" href="{{ url_for('admin.listar_tecnicos') }}">
                              <i class="bi bi-person-badge-fill"></i>Gerenciar Técnicos
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('listar_usuarios') }}">
+                        <a class="nav-link" href="{{ url_for('admin.listar_usuarios') }}">
                              <i class="bi bi-people-fill"></i>Gerenciar Usuários
                         </a>
                     </li>
                 {% elif session.tipo == 'master-admin' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                        <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">
                             <i class="bi bi-speedometer2"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('abrir_os') }}">
+                        <a class="nav-link" href="{{ url_for('solicitante.abrir_os') }}">
                              <i class="bi bi-pencil-square"></i>Abrir OS
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('listar_registros_diretos') }}">
+                        <a class="nav-link" href="{{ url_for('admin.listar_registros_diretos') }}">
                             <i class="bi bi-journal-check"></i>Ver Registros Manutenção
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_configuracoes') }}">
+                        <a class="nav-link" href="{{ url_for('admin.admin_configuracoes') }}">
                              <i class="bi bi-sliders"></i>Configurações
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('listar_tecnicos') }}">
+                        <a class="nav-link" href="{{ url_for('admin.listar_tecnicos') }}">
                              <i class="bi bi-person-badge-fill"></i>Gerenciar Técnicos
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('listar_usuarios') }}">
+                        <a class="nav-link" href="{{ url_for('admin.listar_usuarios') }}">
                              <i class="bi bi-people-fill"></i>Gerenciar Usuários
                         </a>
                     </li>
@@ -138,12 +138,12 @@
                 <div class="dropdown mt-auto"> 
                         <i class="bi bi-person-circle me-2" style="font-size: 1.5rem;"></i>
                         <strong>{{ session.usuario }}</strong>
-                        <a class="nav-link" href="{{ url_for('logout') }}">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
                             <i class="bi bi-box-arrow-right"></i> Sair
                         </a>
                 </div>
                 {% else %}
-                 <a class="nav-link" href="{{ url_for('login') }}">
+                 <a class="nav-link" href="{{ url_for('auth.login') }}">
                     <i class="bi bi-box-arrow-in-right"></i>Login
                 </a>
                 {% endif %}
@@ -151,17 +151,6 @@
     </div>
 
     <main class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
         {% block content %}{% endblock %}
     </main>
 

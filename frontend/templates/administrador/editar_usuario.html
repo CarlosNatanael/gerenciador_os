@@ -8,7 +8,7 @@
     
     <div class="card">
         <div class="card-body">
-            <form method="POST" action="{{ url_for('editar_usuario', id_usuario_alvo=usuario.id) }}">
+            <form method="POST" action="{{ url_for('admin.editar_usuario', id_usuario_alvo=usuario.id) }}">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-md-6" id="campo_especialidade">
+                    <!-- <div class="col-md-6" id="campo_especialidade">
                         <label for="especialidade" class="form-label">Especialidade (Técnico) <span class="text-danger">*</span></label>
                         <select class="form-select" id="especialidade" name="especialidade"
                                 {% if usuario.tipo == 'manutencao' %}required{% endif %}>
@@ -50,7 +50,7 @@
                             <option value="eletricista" {% if usuario.especialidade == 'eletricista' %}selected{% endif %}>Eletricista</option>
                             <option value="mecanico" {% if usuario.especialidade == 'mecanico' %}selected{% endif %}>Mecânico</option>
                         </select>
-                    </div>
+                    </div> -->
                     <div class="col-md-6">
                         <div class="form-check mt-4">
                             <input type="checkbox" class="form-check-input" id="ativo" name="ativo" 
@@ -64,7 +64,7 @@
                 </div>
                 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
-                    <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                    <a href="{{ url_for('admin.listar_usuarios') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-save me-1"></i> Salvar Alterações
                 </button>
@@ -74,7 +74,7 @@
             <hr>
             
             <h5 class="mt-4">Alterar Senha</h5>
-            <form method="POST" action="{{ url_for('alterar_senha_usuario', id_usuario_alvo=usuario.id) }}">
+            <form method="POST" action="{{ url_for('admin.alterar_senha_usuario', id_usuario_alvo=usuario.id) }}">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="nova_senha" class="form-label">Nova Senha <span class="text-danger">*</span></label>

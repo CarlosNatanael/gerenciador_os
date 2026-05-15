@@ -7,11 +7,11 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Abertura de Ordem de Serviço</h2>
         {% if session.tipo == 'admin' or session.tipo == 'master-admin' %}
-            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+            <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left"></i> Voltar ao Dashboard Admin
             </a>
         {% elif session.tipo == 'solicitante' %}
-            <a href="{{ url_for('minhas_os') }}" class="btn btn-outline-secondary">
+            <a href="{{ url_for('solicitante.minhas_os') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left"></i> Ver Minhas OS
             </a>
         {% endif %}
@@ -30,7 +30,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="POST" action="{{ url_for('abrir_os') }}">
+            <form method="POST" action="{{ url_for('solicitante.abrir_os') }}">
                 <div class="mb-3">
                     <label for="equipamento" class="form-label">Equipamento <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="equipamento" name="equipamento" value="{{ request.form.equipamento if request.form else '' }}" required>
@@ -76,11 +76,11 @@
 
                 <div class="d-flex justify-content-end mt-4">
                     {% if session.tipo == 'admin' or session.tipo == 'master-admin' %}
-                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">
+                        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary me-2">
                             <i class="bi bi-arrow-left"></i> Voltar ao Dashboard Admin
                         </a>
                     {% elif session.tipo == 'solicitante' %}
-                        <a href="{{ url_for('minhas_os') }}" class="btn btn-outline-secondary me-2">
+                        <a href="{{ url_for('solicitante.minhas_os') }}" class="btn btn-outline-secondary me-2">
                             <i class="bi bi-arrow-left"></i> Ver Minhas OS
                         </a>
                     {% endif %}

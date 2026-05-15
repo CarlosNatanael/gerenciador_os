@@ -8,7 +8,7 @@
     
     <div class="card">
         <div class="card-body">
-            <form method="POST" action="{{ url_for('novo_usuario') }}">
+            <form method="POST" action="{{ url_for('admin.novo_usuario') }}">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
@@ -50,7 +50,7 @@
                 </div>
                 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                    <a href="{{ url_for('admin.listar_usuarios') }}" class="btn btn-outline-secondary me-md-2">Cancelar</a>
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-person-plus-fill me-1"></i> Salvar Usuário
                     </button>
