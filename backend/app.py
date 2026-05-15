@@ -1,6 +1,7 @@
 from flask import Flask
 from config import Config
 from database import close_db
+from flask_wtf.csrf import CSRFProtect
 
 # Importação dos Blueprints
 from rotas.auth import auth_bp
@@ -15,8 +16,10 @@ def create_app():
                 static_folder='../frontend/static')
     
     app.config.from_object(Config)
-
     app.teardown_appcontext(close_db)
+
+    csrf = CSRFProtect()
+    csrf.init_app(app)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
